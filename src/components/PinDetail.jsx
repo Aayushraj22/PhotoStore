@@ -54,15 +54,13 @@ const PinDetail = ({user}) => {
       client.fetch(query)
         .then((data) => {   // it returns an array of post of length 1
           setPinDetail(data[0])   //  on 0th index is our post placed
-          console.log(data[0])
         
           if(data[0]) {
             // now get all the post which have same category as the current post has, and it will used to recommedation
             query = pinDetailMorePinQuery(data[0])
             client.fetch(query)
               .then((res) => {
-                setPins(res)
-                console.log('recommend',res)
+                setPins(res)  
               })
           }
         })

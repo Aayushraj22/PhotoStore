@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import jwt_decode from "jwt-decode";
 
 import videoshare from '../assets/share.mp4'
-import logo from '../assets/logowhite.png'
+import WhiteLogo from '../assets/whiteLogo.png'
 import { client } from '../client';
 
 const Login = () => {
@@ -49,7 +49,7 @@ const Login = () => {
 
         <div className="absolute flex flex-col justify-center items-center bg-blackOverlay top-0 left-0 right-0 bottom-0">
           <div className="p-5">
-            <img src={logo} alt="logo" width="130px"/>
+            <img src={WhiteLogo} alt="whiteLogo" width="130px"/>
           </div>
           <div className="shadow-2xl">
               <GoogleLogin

@@ -21,7 +21,7 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
   // but i need alreadySaved to be boolean,  so !1 -> false, !false -> true
   // so, !!1 -> true and same for false boolean value
 
-  // save the current post in user save array and increase the count of user liked this post in postedBy user 
+  // save the current post in user save array and increase the count of saved of post in postedBy user 
   const savePin = (id) => {
     if(alreadySaved === undefined) {
 
@@ -50,7 +50,7 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
   }
 
   return (
-  <div className='m-2 p-2 rounded-md bg-green-100'>
+  <div className='m-2 p-2 rounded-md bg-white hover:shadow-md'>
     <div
       onMouseEnter={() => setPostHovered(true)}
       onMouseLeave={() => setPostHovered(false)}
@@ -124,11 +124,11 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
      to={`user-profile/${postedBy._id}`}
      className=' flex gap-2 mt-2 items-center'
      >
-      <img 
+      {/* <img 
         src={postedBy.imageUrl}   // this contains the image of user posted this post
         alt="PostedBy-user" 
         className='w-8 h-8 rounded-full object-cover'
-      />
+      /> */}
       <p className='font-bold capitalise'>{postedBy.userName}</p>
     </Link>
     

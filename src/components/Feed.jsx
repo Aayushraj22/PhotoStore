@@ -8,14 +8,13 @@ import Spinner from './Spinner'
 import { feedQuery, searchQuery } from '../utils/data'
 
 
-const Feed = ({searchTerm, setSearchTerm}) => {
+const Feed = () => {
 
   const [pins, setPins] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const {categoryId} = useParams()
 
   useEffect(() => {
-    setLoading(true)
 
     if(categoryId) {
       const query = searchQuery(categoryId)
@@ -41,11 +40,11 @@ const Feed = ({searchTerm, setSearchTerm}) => {
 
   return (
     <div>
-      {pins !== null ? (
+      {pins?.length ? (
         <MasonryLayout pins={pins} />
         ) : (
           <div className='text-3xl font-bold text-red-600 text-center mt-5'>
-            No post to show
+            No post to show!
           </div>
         )}
     </div>

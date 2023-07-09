@@ -4,7 +4,7 @@ import {RiHomeFill} from 'react-icons/ri'
 // import {IoIosArrowForward} from 'react-icons/io'
 
 import {categories} from '../utils/data'
-import logo from '../assets/logo.png'
+import whiteLogo from '../assets/whiteLogo.png'
 
 const Sidebar = ({user,closeToggle}) => {
 
@@ -25,7 +25,7 @@ const Sidebar = ({user,closeToggle}) => {
           className='flex px-5 gap-2 my-6 pt-1 w-190 items-center'
           onClick={handleCloseSidebar}
          >
-          <img src={logo} alt="logo" className='w-full' />
+          <img src={whiteLogo} alt="whilteLogo" className='w-full' />
         </Link>
 
         <div className='flex flex-col '>
