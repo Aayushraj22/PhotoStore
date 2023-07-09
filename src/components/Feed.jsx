@@ -41,7 +41,13 @@ const Feed = ({searchTerm, setSearchTerm}) => {
 
   return (
     <div>
-      {pins && <MasonryLayout pins={pins} />}
+      {pins !== null ? (
+        <MasonryLayout pins={pins} />
+        ) : (
+          <div className='text-3xl font-bold text-red-600 text-center mt-5'>
+            No post to show
+          </div>
+        )}
     </div>
   )
 }

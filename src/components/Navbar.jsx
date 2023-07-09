@@ -10,8 +10,8 @@ const Navbar = ({searchTerm, setSearchTerm, user}) => {
 
 
   return (
-  <div className='flex gap-2 md:gap-5 w-full mt-5 pb-7'>
-    <div className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-sm ">
+  <div className='flex gap-2 md:gap-5 w-full mt-5 py-2 px-2'>
+    <div className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-md ">
       <IoMdSearch fontSize={21} className='ml-1' />
       <input 
         type='text'
@@ -27,11 +27,11 @@ const Navbar = ({searchTerm, setSearchTerm, user}) => {
         to={`/user-profile/${user?._id}`}
         className='hidden md:flex items-center justify-center' 
        >
-        <img src={user.imageUrl} alt="userProfileImage" className='w-14 h-12 rounded-lg'/>
+        <img src={user.imageUrl} alt="userProfileImage" className='w-12 h-10 rounded-lg'/>
       </Link>
       <Link 
         to='/create-pin'
-        className='bg-black text-white rounded-lg w-12 h-12 md:w-14 md:h-12 flex justify-center items-center' 
+        className='bg-black text-white rounded-lg w-12 h-10 md:w-12 md:h-10 flex justify-center items-center' 
        >
         <IoMdAdd fontSize={18}/>
       </Link>

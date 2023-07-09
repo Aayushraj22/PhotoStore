@@ -1,23 +1,16 @@
 import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import {RiHomeFill} from 'react-icons/ri'
-import {IoIosArrowForward} from 'react-icons/io'
+// import {IoIosArrowForward} from 'react-icons/io'
 
-
+import {categories} from '../utils/data'
 import logo from '../assets/logo.png'
 
 const Sidebar = ({user,closeToggle}) => {
 
-  const isNotActiveStyle = 'flex items-center px-5 gap-3 text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize'
-  const isActiveStyle = 'flex items-center px-5 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize'
-  const categories = [
-    {name:'Animals'},
-    {name:'Photography'},
-    {name:'Coding'},
-    {name:'Nature'},
-    {name: 'Animation'},
-    {name: 'others'}
-  ]
+  const isNotActiveStyle = ' flex items-center px-5 p-1 gap-3 text-gray-500 hover:text-black transition-all duration-200 ease-in-out capitalize'
+  const isActiveStyle = ' flex items-center px-5 p-1 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize'
+  
 
   const handleCloseSidebar = () => {
     if(closeToggle) closeToggle(false)
@@ -52,6 +45,11 @@ const Sidebar = ({user,closeToggle}) => {
               className={({isActive}) => isActive? isActiveStyle : isNotActiveStyle }
               onClick={handleCloseSidebar}
             >
+              <img 
+                src={category.image} 
+                alt={category.name}
+                className='w-8 h-8 rounded-full '
+              />
               {category.name}
             </NavLink>
           ))}
@@ -67,7 +65,7 @@ const Sidebar = ({user,closeToggle}) => {
           <img 
             src={user.imageUrl} 
             alt="userProfile" 
-            className='w-10 h-10 rounded-full '  
+            className='w-9 h-9 rounded-full border-2 border-blue-500'  
           />
           <p>{user.userName} </p>
         </Link>

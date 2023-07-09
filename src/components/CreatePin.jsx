@@ -110,7 +110,7 @@ const CreatePin = ({user}) => {
             ) : ( //below div aur img se h-full class hum hata diye hai
                <div className='relative '> 
                 <img src={imageAsset.url} 
-                  alt="upload-image"
+                  alt="uploadImage"
                   className='w-full '
                 />
                 <button
@@ -179,7 +179,7 @@ const CreatePin = ({user}) => {
                </select>
             </div>
             <div className="flex justify-end items end mt-5">
-              <button type='button' onClick={savePin} className='bg-red-500 text-white font-bold p-2 rounded-full outline-none w-28 capitalise'>
+              <button type='button' onClick={savePin} className='bg-red-500 text-white font-bold p-2 rounded-full outline-none w-28 capitalize'>
                 save pin
               </button>
             </div>

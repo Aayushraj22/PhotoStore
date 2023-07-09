@@ -1,6 +1,6 @@
 import React from 'react'
 import {FcGoogle} from 'react-icons/fc'
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'
+import { GoogleLogin } from '@react-oauth/google'
 import { useNavigate } from 'react-router-dom'
 import jwt_decode from "jwt-decode";
 
@@ -52,10 +52,6 @@ const Login = () => {
             <img src={logo} alt="logo" width="130px"/>
           </div>
           <div className="shadow-2xl">
-            <GoogleOAuthProvider
-              // clientId={process.env.REACT_APP_GOOGLE_API_TOKEN}
-              clientId= {process.env.REACT_APP_GOOGLE_API_TOKEN}
-            >
               <GoogleLogin
                 render={(renderProps) => (
                   <button
@@ -64,14 +60,15 @@ const Login = () => {
                     onClick={renderProps.onClick}
                     disabled={renderProps.disabled}
                   >
-                    <FcGoogle /> signIn with google
+                    <FcGoogle />
                   </button>
                 )}
+                theme='filled_black'
+                
                 onSuccess={responseGoogle}
-                onFailure={responseGoogle}
+                onError={responseGoogle}
                 cookiePolicy="single_host_origin"
               />
-            </GoogleOAuthProvider>
           </div>
         </div>
     </div>
