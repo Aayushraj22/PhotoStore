@@ -19,6 +19,7 @@ const CreatePin = ({user}) => {
   const [category, setCategory] = useState(null)
   const [imageAsset, setImageAsset] = useState(null)
   const [wrongImageType, setWrongImageType] = useState(false)
+  const [acknowledge,setAcknowledge] = useState('Save')
 
   const navigate = useNavigate()
   const uploadImage = (e) => {
@@ -47,7 +48,9 @@ const CreatePin = ({user}) => {
   }
 
   const savePin = () => {
-    if(title && about && destination && imageAsset._id && category) {  // all the fields provided is filled then only the post will be posted
+    if(title && about && destination && imageAsset?._id && category) {  // all the fields provided is filled then only the post will be posted
+      setAcknowledge('Saving')
+
       const doc = {   // create a document to store the new post in sanity
         _type:'pin',
         title,      // in js when key and value are same then only writting key is sufficient, i.e; title: title
@@ -81,40 +84,41 @@ const CreatePin = ({user}) => {
 
   return (
     <div className='flex flex-col justify-center items-center mt-5 lg:h-4/5'>
-      {fields && (
+      {/* {fields && (
         <p className='text-red-500 mb-5 text-xl transition-all duration-150 ease-in'>Please fill in all the fields</p>
-      )}
-      <div className="flex lg:flex-row flex-col justify-center items-center lg:p-5 p-3 lg:w-4/5 w-full bg-white">
-        <div className="bg-secondaryColor p-3 flex flex-0.7 w-full">
-          <div className="flex justify-center items-center flex-col border-dotted border-2 border-gray-300 p-3 w-full h-420">
-            {loading && <Spinner />}
-            {wrongImageType && <p>Wrong Image type</p>}
+      )} */}
+      <div className="flex lg:flex-row flex-col justify-center items-center lg:p-5 p-3 lg:w-4/5 w-full bg-white ">
+        <div className="bg-secondaryColor p-3 flex flex-0.7 w-full"> 
+          <div className="flex justify-start items-center flex-col border-dotted border-2 border-gray-300 p-3 w-full h-auto">
+            <div className='w-full h-auto'>
+              {loading && <Spinner message="uploading image"/>}
+              {wrongImageType && <p className='text-red-700 font-bold text-lg mb-1'>Wrong Image type</p>}
+            </div>
             {!imageAsset ? (
-              <label>
-                <div className='flex flex-col justify-center items-center cursor-pointer hover:shadow-lg'>
-                  <div className='flex justify-center items-center flex-col'>
-                    <p className="font-bold text-2xl">
+              <label className='w-full h-full relative'>
+                <div className='flex flex-col justify-between items-center gap-52 cursor-pointer hover:shadow-lg h-full'>
+                  <div className='flex justify-center items-center flex-col gap-1 '>
+                    <p className="font-bold text-3xl">
                       <AiOutlineCloudUpload />
                     </p>
-                    <p className='text-lg'>Click to Upload</p>
+                    <p className='text-xl'>Click to Upload</p>
                   </div>
-                  <p className='mt-32 text-gray-400 p-2'>Use high-quality SVG,JPEG,JPG,GIF,PNG less than 20MB</p>
+                  <p className=' text-gray-400 p-2 '>Use high-quality SVG,JPEG,JPG,GIF,PNG less than 20MB</p>
                 </div>
                 <input type="file"
                   name="upload-image"
                   onChange={uploadImage} 
-                  className='w-0 h-0'
+                  className='w-full h-full top-0 left-0 absolute -z-10'
                 />
-
               </label>
             ) : ( //below div aur img se h-full class hum hata diye hai
-               <div className='relative '> 
+               <div className='relative h-full'> 
                 <img src={imageAsset.url} 
                   alt="uploadImage"
-                  className='w-full '
+                  className='w-full h-full object-cover '
                 />
                 <button
-                 className='absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out'
+                 className='absolute bottom-3 right-3 p-2 rounded-full bg-white text-lg cursor-pointer outline-none opacity-70 hover:opacity-100 hover:text-white hover:bg-black transition-all duration-500 ease-in-out'
                  onClick={() => setImageAsset(null)}
                  >
                   <MdDelete />
@@ -148,22 +152,6 @@ const CreatePin = ({user}) => {
             onChange={(e) => setDestination(e.target.value)}
             className='outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2 focus:border-gray-400 transition-all duration-500 ease-in-out focus:shadow-lg'
           />
-          {/* <div className="flex flex-wrap border-2 sm:p-0 p-2 justify-center gap-2">
-            {categories.map((category) => (
-              <div key={category.name} 
-                className='flex items-center max-sm:w-full max-sm:gap-6 gap-4 w-40 border-2 border-white hover:border-gray-200 hover:rounded-lg transition-all duration-250 ease-in cursor-pointer px-2 hover:shadow-lg'
-               >
-                <div className='w-12 h-12 flex justify-center items-center '>
-                  <img 
-                    src={category.image} 
-                    alt={`${category.name}-image`} 
-                    className='w-full h-full rounded-full max-sm:rounded-lg '
-                  />
-                </div>
-                <p>{category.name}</p>
-              </div>
-            ))}
-          </div> */}
 
           <div className="flex flex-col">
             <div>
@@ -178,9 +166,12 @@ const CreatePin = ({user}) => {
                 ))}
                </select>
             </div>
+            {fields && (
+              <p className='text-red-700 my-2 text-xl transition-all duration-150 ease-in'>Please fill in all the fields</p>
+            )}
             <div className="flex justify-end items end mt-5">
               <button type='button' onClick={savePin} className='bg-red-500 text-white font-bold p-2 rounded-full outline-none w-28 capitalize'>
-                save pin
+                {acknowledge}
               </button>
             </div>
           </div>
