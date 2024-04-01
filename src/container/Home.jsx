@@ -19,7 +19,7 @@ const Home = () => {
 
   // const userInfo = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear()
   const userInfo = fetchUser()
-  // console.log(userInfo,userInfo.sub)
+  // console.log('userinfo: ', userInfo)
 
   // fetch user data from sanity backend
   useEffect(() => {
@@ -28,6 +28,7 @@ const Home = () => {
 
     client.fetch(query).then((data) => {
       setUser(data[0])
+      // console.log('user : ',data)
     })
   }, [])
 

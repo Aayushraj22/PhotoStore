@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import {MdDownloadForOffline} from 'react-icons/md'
-import { Link ,useParams} from 'react-router-dom'
+import { Link ,Navigate,useParams} from 'react-router-dom'
 import {v4 as uuidv4} from 'uuid'  // popular library to create unique id
 
 import {client, urlFor} from '../client'
@@ -9,13 +9,16 @@ import {pinDetailMorePinQuery,pinDetailQuery} from '../utils/data'
 import Spinner from './Spinner'
 
 const PinDetail = ({user}) => {
-
+  // console.log('user : ',user)
   const [pins, setPins] = useState(null)
   const [pinDetail, setPinDetail] = useState(null)
   const [comment, setComment] = useState('')
   const [addingComment, setAddingComment] = useState(false)
 
   const {pinId} = useParams()
+  
+  
+  // console.log('currentPin: ',pinDetail);
 
   const addComment = () => {
     if(comment) {
@@ -45,28 +48,28 @@ const PinDetail = ({user}) => {
     fetchPinDetails()
 
   }, [pinId])
-  
 
   const fetchPinDetails = () => {
     let query = pinDetailQuery(pinId)
-
+    
     if(query) {
       client.fetch(query)
-        .then((data) => {   // it returns an array of post of length 1
-          setPinDetail(data[0])   //  on 0th index is our post placed
-        
-          if(data[0]) {
-            // now get all the post which have same category as the current post has, and it will used to recommedation
-            query = pinDetailMorePinQuery(data[0])
-            client.fetch(query)
-              .then((res) => {
-                setPins(res)  
-              })
-          }
-        })
+      .then((data) => {   // it returns an array of post of length 1
+        setPinDetail(data[0])   //  on 0th index is our post placed
+      
+        if(data[0]) {
+          // now get all the post which have same category as the current post has, and it will used to recommedation
+          query = pinDetailMorePinQuery(data[0])
+          client.fetch(query)
+          .then((res) => {
+            setPins(res)  
+          })
+        }
+      })
     }
-  } 
-  
+  }
+
+    
   
   if(pinDetail === null) 
     return <Spinner message="Loading pin..." /> 
@@ -106,7 +109,7 @@ const PinDetail = ({user}) => {
 
       {/* a link to go to user-profile who posted this post */}
       <Link
-        to={`user-profile/${pinDetail.postedBy._id}`}
+        to={`/user-profile/${pinDetail.postedBy._id}`}
         className=' flex gap-2 mt-5 items-center bg-white rounded-lg'
        >
         <img 
@@ -137,7 +140,7 @@ const PinDetail = ({user}) => {
       {/* for user to post the comment */}
       <div className="flex items-center flex-wrap mt-6 gap-3 px-2">
         <Link
-          to={`user-profile/${user?.sub}`}
+          to={`/user-profile/${user?._id}`}
           className=' flex items-center cursor-pointer'
          >
           <img 
@@ -166,7 +169,7 @@ const PinDetail = ({user}) => {
   {pins?.length > 0 ? (
     <>
       <h2 className="text-center font-bold text-2xl mt-8 mb-4">
-        More like this{console.log(pins)}
+        More like this
       </h2>
       <MasonryLayout pins={pins} />
     </>

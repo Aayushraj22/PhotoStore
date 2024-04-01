@@ -10,20 +10,27 @@ import { fetchUser } from '../utils/fetchUser'
 
 
 const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
+
   const navigate = useNavigate()
   const [postHovered, setPostHovered] = useState(false)
+  const [savingState, setSavingState] = useState('save')
   const user = fetchUser()
-
-  let alreadySaved = save?.filter((item) => item?.postedBy?._id === user?.sub)
+  
+  
   // filter function short revise
   //  1, [2,1,3] -> on filter it gives -> [1].length  -> 1
   //  5, [2,1,3] -> on filter it gives ->  [].length  -> 0
   // but i need alreadySaved to be boolean,  so !1 -> false, !false -> true
   // so, !!1 -> true and same for false boolean value
 
+  // this will check whether the current user have liked this post earlier or not
+  let alreadySaved = save?.filter((item) => item?.postedBy?._id === user?.sub)
+  // console.log('saved by people -> ',alreadySaved)
+
   // save the current post in user save array and increase the count of saved of post in postedBy user 
   const savePin = (id) => {
-    if(alreadySaved === undefined) {
+
+    if(alreadySaved === undefined ) {
 
       client.patch(id)
         .setIfMissing({save: []})
@@ -37,10 +44,13 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
         }])
           .commit()
           .then(() => {
-            window.location.reload()  // reload the current window
+            setSavingState('Saved')
           })
     } 
   }
+
+  
+
 
   // function to remove the post from the view, after post get delets reloads the current window
   const deletePin = (id) => {
@@ -71,20 +81,20 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
               </a>
             </div>
 
-            {alreadySaved !== undefined ? (
+            {(alreadySaved !== undefined || savingState === 'Saved') ? (
               <button
                 onClick={(e) => e.stopPropagation()} 
                 className='bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 rounded-3xl text-base hover:shadow-md oulined-none'>
-                {save.length}  Saved
+                {save?.length + ' ' + savingState}
               </button>
-             ):(
+             ) : (
                   <button 
                     onClick={(e) => {
                       e.stopPropagation()
                       savePin(_id)
                     }}
                     className='bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 rounded-3xl text-base hover:shadow-md oulined-none'>
-                    Save
+                    {savingState}
                   </button>
                 )
             }
@@ -94,7 +104,7 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
             {destination && (
               <a
                 href={destination}
-                target='_black'
+                target='_blank'
                 rel='noreferrer'
                 className='bg-white text-black flex items-center gap-2 font-bold py-2 px-4 rounded-full opacity-70 hover:opacity-100 hover:shadow-md'
                >

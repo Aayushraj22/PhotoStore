@@ -55,9 +55,9 @@ const UserProfile = () => {
   }, [userId])
   
   const logout =  () => {
-    console.log('before clear local stroage -> ',localStorage)
+    // console.log('before clear local stroage -> ',localStorage)
     localStorage.clear()
-    console.log('after clear local stroage -> ',localStorage)
+    // console.log('after clear local stroage -> ',localStorage)
     navigate('/login')
   }
 
