@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react'
 import {MdDownloadForOffline} from 'react-icons/md'
-import { Link ,Navigate,useParams} from 'react-router-dom'
+import { Link ,useParams} from 'react-router-dom'
 import {v4 as uuidv4} from 'uuid'  // popular library to create unique id
 
 import {client, urlFor} from '../client'
@@ -16,8 +16,7 @@ const PinDetail = ({user}) => {
   const [addingComment, setAddingComment] = useState(false)
 
   const {pinId} = useParams()
-  
-  
+ 
   // console.log('currentPin: ',pinDetail);
 
   const addComment = () => {
@@ -166,16 +165,18 @@ const PinDetail = ({user}) => {
     </div> 
   </div>
 
+  <h2 className="text-center font-bold text-2xl mt-8 mb-4">
+    More like this
+  </h2>
   {pins?.length > 0 ? (
-    <>
-      <h2 className="text-center font-bold text-2xl mt-8 mb-4">
-        More like this
-      </h2>
       <MasonryLayout pins={pins} />
-    </>
     ) : 
     (
-      <Spinner message="Loading more Post..." />
+      <>
+        {pins?.length === 0 ? 
+          (<h5 className='text-center font-semibold text-xl mt-4 mb-2'>Post your <span className='text-sky-600'>Creative Images</span>, so it can be recommened</h5>) : 
+          ( <Spinner message="Loading more Post..." />)}
+      </>
     )
   }
 </>  
