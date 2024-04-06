@@ -17,9 +17,8 @@ const Home = () => {
   const [user, setUser] = useState(null)
   const scrollRef = useRef(null)
 
-  // const userInfo = localStorage.getItem('user') !== 'undefined' ? JSON.parse(localStorage.getItem('user')) : localStorage.clear()
+  // getting signedIn user from localStorage
   const userInfo = fetchUser()
-  // console.log('userinfo: ', userInfo)
 
   // fetch user data from sanity backend
   useEffect(() => {
@@ -28,7 +27,6 @@ const Home = () => {
 
     client.fetch(query).then((data) => {
       setUser(data[0])
-      // console.log('user : ',data)
     })
   }, [])
 
@@ -41,6 +39,7 @@ const Home = () => {
 
   return (
     <div className='flex md:flex-row flex-col bg-gray-50 h-screen transition-height duration-75 ease-out'>
+
       <div className={`hidden md:flex h-screen flex-initial `}>
         {/* sidebar for larger devices */}
         <Sidebar user={user && user}/>   

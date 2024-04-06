@@ -36,7 +36,7 @@ const Search = ({searchTerm}) => {
       {pins?.length !==0 && <MasonryLayout pins={pins} /> }
       {pins?.length === 0 && searchTerm !== '' && loading===false && (
         <div className="mt-10 text-center text-xl">
-          No post Found!
+          It seems the searched post, Not Found.
         </div>
       )}
     </div>

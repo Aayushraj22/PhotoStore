@@ -2,6 +2,7 @@ import React,{useEffect, useState} from 'react'
 import {MdDownloadForOffline} from 'react-icons/md'
 import { Link ,useParams} from 'react-router-dom'
 import {v4 as uuidv4} from 'uuid'  // popular library to create unique id
+import { GoLinkExternal } from "react-icons/go";
 
 import {client, urlFor} from '../client'
 import MasonryLayout from './MasonryLayout'
@@ -9,15 +10,18 @@ import {pinDetailMorePinQuery,pinDetailQuery} from '../utils/data'
 import Spinner from './Spinner'
 
 const PinDetail = ({user}) => {
-  // console.log('user : ',user)
   const [pins, setPins] = useState(null)
   const [pinDetail, setPinDetail] = useState(null)
   const [comment, setComment] = useState('')
   const [addingComment, setAddingComment] = useState(false)
 
   const {pinId} = useParams()
- 
-  // console.log('currentPin: ',pinDetail);
+
+  useEffect(() => {
+    fetchPinDetails()
+
+  }, [pinId])
+
 
   const addComment = () => {
     if(comment) {
@@ -43,10 +47,6 @@ const PinDetail = ({user}) => {
     }
   }
 
-  useEffect(() => {
-    fetchPinDetails()
-
-  }, [pinId])
 
   const fetchPinDetails = () => {
     let query = pinDetailQuery(pinId)
@@ -75,12 +75,12 @@ const PinDetail = ({user}) => {
 
   return (
 <>
-  <div className='flex lg:flex-row flex-col m-auto bg-white' style={{maxWidth:'1500px',borderRadius: '32px'}}> 
-    <div className="flex justify-center items-center md:items-start flex-initial">
+  <div className='flex lg:flex-row flex-col m-auto bg-white mt-3 shadow-lg p-2' style={{maxWidth:'1500px'}}> 
+    <div className="flex justify-center items-center md:items-start flex-initial max-h-[400px]">
       <img 
         src={pinDetail.image && urlFor(pinDetail.image).url()}
         alt={pinDetail.title} 
-        className='rounded-t-3xl rounded-b-lg'
+        className='rounded-lg h-full '
       />
     </div> 
     <div className="w-full p-5 flex-1 xl:min-w-620">
@@ -88,15 +88,15 @@ const PinDetail = ({user}) => {
         <div className="flex gap-2 items-center px-2 hover:text-base-800">
           <a 
             href={`${pinDetail.image.asset.url}?dl`}
-            // onClick={(e) => e.stopPropagation()}
-            className='flex items-center justify-center bg-white rounded-full opacity-70 hover:opacity-100 p-2 gap-2 hover:shadow-md'
+            className='flex items-center justify-center bg-white rounded-lg hover:bg-green-400 opacity-50 hover:opacity-100 p-2 gap-2 hover:shadow-md'
            >
             <MdDownloadForOffline fontSize={24}/>
             <p className='text-base capitalize'>download</p>
           </a>
         </div>
-        <a href={pinDetail.destination} target='_blank' rel='noreferrer'>
-          {pinDetail.title}
+        <a href={pinDetail.destination} target='_blank' rel='noreferrer' className='text-blue-800 flex items-center gap-1 text-xs'>
+          <span >Image </span>
+          <span><GoLinkExternal /></span>
         </a>
       </div>
       <div>
@@ -149,14 +149,15 @@ const PinDetail = ({user}) => {
           />
         </Link>
         <input type="text"
-          className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-2xl focus:border-gray-300'
+          className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-lg focus:border-gray-300'
           placeholder='add comments..'
           value={comment}
           onChange={(e) => setComment(e.target.value)}
+          autoFocus
         />
         <button
           type='button'
-          className='bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none'
+          className='bg-red-500 hover:bg-red-600 text-white rounded-md px-4 py-2 font-semibold text-base outline-none '
           onClick={addComment}
         >
           {addingComment ? 'Posting..' : 'Post'}

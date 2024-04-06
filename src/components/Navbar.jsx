@@ -14,12 +14,13 @@ const Navbar = ({searchTerm, setSearchTerm, user}) => {
     <div className="flex justify-start items-center w-full px-2 rounded-md bg-white border-none outline-none focus-within:shadow-md ">
       <IoMdSearch fontSize={21} className='ml-1' />
       <input 
-        type='text'
+        type='search'
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder='Search..'
         value={searchTerm}
         className='p-2 w-full bg-white outline-none'
         onFocus={() => navigate('/search')}
+        onBlur={() => navigate(-1)}
       />
     </div>
     <div className="flex gap-3">

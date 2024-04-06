@@ -52,7 +52,7 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
   
 
 
-  // function to remove the post from the view, after post get delets reloads the current window
+  // function to remove the post from the view, after post get deleted reloads the current window
   const deletePin = (id) => {
     client.delete(id).then(() => {
       window.location.reload();
