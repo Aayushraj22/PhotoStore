@@ -1,9 +1,12 @@
-import React,{useState} from 'react'
+import React,{ useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom' 
 import {v4 as uuidv4} from 'uuid'
-import {MdDownloadForOffline} from 'react-icons/md'
 import {AiTwotoneDelete} from 'react-icons/ai'
-import {BsFillArrowUpRightCircleFill} from 'react-icons/bs'
+import { FiDownload } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
+import { FaRegHeart,FaHeart } from "react-icons/fa";
+import { BiLinkExternal } from "react-icons/bi";
+import {TailSpin} from 'react-loader-spinner'
 
 import {client, urlFor } from '../client'
 import { fetchUser } from '../utils/fetchUser'
@@ -12,26 +15,30 @@ import { fetchUser } from '../utils/fetchUser'
 const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
 
   const navigate = useNavigate()
-  const [postHovered, setPostHovered] = useState(false)
-  const [savingState, setSavingState] = useState('save')
   const user = fetchUser()
-  
-  
-  // filter function short revise
-  //  1, [2,1,3] -> on filter it gives -> [1].length  -> 1
-  //  5, [2,1,3] -> on filter it gives ->  [].length  -> 0
-  // but i need alreadySaved to be boolean,  so !1 -> false, !false -> true
-  // so, !!1 -> true and same for false boolean value
+  const [postHovered, setPostHovered] = useState(false)
+  const [performAction, setPerformAction] = useState({
+    ishappening: false,
+    actionType: '',
+  })
 
-  // this will check whether the current user have liked this post earlier or not
-  let alreadySaved = save?.filter((item) => item?.postedBy?._id === user?.sub)
-  // console.log('saved by people -> ',alreadySaved)
+  const [saveInfo, setSaveInfo] = useState({
+    userSavedStatus : save ? (save?.filter((item) => item?.postedBy?._id === user?.sub)?.length > 0 ? true : false) : false,
+    totalNoOfSave: save !== undefined ? save?.length : 0,
+  })
+ 
+  // save is an array having the people's id liked the post, at beginning it should be undefined, but as any user liked a post it will become defined and after that save always have an array, 
+  // [] -> is a defined array , it is said empty array as [].length = 0
 
-  // save the current post in user save array and increase the count of saved of post in postedBy user 
-  const savePin = (id) => {
+  // below function will add the user's id in save array of db and also change the save-status to true, increament the total saved count by 1, if user have liked the photo first-time but already liked then nothing happens (ideally it should remove the saved status but i've not implemented that features)
+  const savePin = (event,id) => {
+    event.stopPropagation();
 
-    if(alreadySaved === undefined ) {
-
+    if(!saveInfo.userSavedStatus) {
+      setPerformAction({
+        ishappening: true,
+        actionType: 'saving',
+      })
       client.patch(id)
         .setIfMissing({save: []})
         .insert('after', 'save[-1]', [{
@@ -44,9 +51,21 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
         }])
           .commit()
           .then(() => {
-            setSavingState('Saved')
+            setSaveInfo({
+              ...saveInfo, 
+              userSavedStatus: true,
+              totalNoOfSave: saveInfo.totalNoOfSave + 1,
+            })
+
+            setPerformAction({
+              ishappening: false,
+              actionType: '',
+            })
           })
+    }else{
+      // this block have code for, when user want to undo their save-status, i.e; unsave the pin
     } 
+
   }
 
   
@@ -54,63 +73,64 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
 
   // function to remove the post from the view, after post get deleted reloads the current window
   const deletePin = (id) => {
+    setPerformAction({
+      ishappening: true,
+      actionType: 'deleting',
+    })
+
     client.delete(id).then(() => {
       window.location.reload();
     })
   }
 
   return (
-  <div className='m-2 p-2 rounded-md bg-white hover:shadow-md'>
+  <div className='m-2 p-2 rounded-md bg-white hover:shadow-md relative'>
     <div
       onMouseEnter={() => setPostHovered(true)}
       onMouseLeave={() => setPostHovered(false)}
       className='relative cursor-zoom-in w-auto transition-all duration-500 ease-in-out hover:shadow-lg rounded-lg overflow-hidden opacity-100 hover:opacity-90'
       onClick={() => navigate(`/pin-detail/${_id}`)}
-     >
+    >
       <img src={urlFor(image).width(250).url()} alt="user-Post" className='rounded-lg w-full '/>  
       {postHovered && (
-        <div className="absolute top-0 h-full w-full flex flex-col justify-between p-2 pl-1 z-50 ">
-          <div className="flex items-center justify-between">
+        <div className="absolute top-0 h-full w-full flex flex-col justify-between p-2 pl-1 z-10 max-sm:hidden">
+          <div className="flex items-center justify-between text-lg">
             <div className='flex gap-2 '>
               <a 
                 href={`${image.asset.url}?dl`}
                 onClick={(e) => e.stopPropagation()}
-                className='flex items-center justify-center bg-white rounded-full w-8 h-8 opacity-70 hover:opacity-100 p-1'
+                className='flex items-center justify-center bg-white rounded-full opacity-70 hover:opacity-100 p-2 '
               >
-                <MdDownloadForOffline fontSize={24}/>
+                <FiDownload />
               </a>
             </div>
 
-            {(alreadySaved !== undefined || savingState === 'Saved') ? (
-              <button
-                onClick={(e) => e.stopPropagation()} 
-                className='bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 rounded-3xl text-base hover:shadow-md oulined-none'>
-                {save?.length + ' ' + savingState}
+            {
+              <button className='opacity-70 hover:opacity-100 bg-white rounded-sm p-2 flex gap-1 outline-none'
+                onClick={(e) => {
+                  savePin(e,_id);
+                }}
+              >
+                {saveInfo.totalNoOfSave > 0 && <span className='text-sm font-semibold'>{saveInfo.totalNoOfSave}</span>}
+                {saveInfo.userSavedStatus ? <FaHeart style={{color: 'red'}} /> : <FaRegHeart />}
               </button>
-             ) : (
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      savePin(_id)
-                    }}
-                    className='bg-red-500 opacity-70 hover:opacity-100 text-white font-bold px-5 py-1 rounded-3xl text-base hover:shadow-md oulined-none'>
-                    {savingState}
-                  </button>
-                )
             }
           </div>
 
           <div className="flex justify-between items-center w-full gap-2">
             {destination && (
-              <a
-                href={destination}
-                target='_blank'
-                rel='noreferrer'
-                className='bg-white text-black flex items-center gap-2 font-bold py-2 px-4 rounded-full opacity-70 hover:opacity-100 hover:shadow-md'
-               >
-                <BsFillArrowUpRightCircleFill />
-                {destination.length > 20 ? destination.slice(8,15) : destination(8)}   {/* i don't want to show https:// which has 8 character*/}
-              </a>
+              <button
+                onClick={(e) => e.stopPropagation()}
+              >
+                <a
+                  href={destination}
+                  target='_blank'
+                  rel='noreferrer'
+                  className='bg-white text-black p-2 text-lg block rounded-full opacity-70 hover:opacity-100 hover:shadow-md'
+                  >
+                  <BiLinkExternal />
+                  </a>
+              </button>
             )}
             
             {postedBy._id === user.sub && (
@@ -119,7 +139,7 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
                   e.stopPropagation()
                   deletePin(_id)
                 }}
-                className='bg-white opacity-70 hover:opacity-100 text-dark font-bold  rounded-3xl text-base hover:shadow-md oulined-none p-1'    
+                className='bg-white opacity-70 text-lg hover:opacity-100 rounded-full p-2 hover:shadow-md oulined-none '    
                >
                 <AiTwotoneDelete />
               </button>
@@ -141,6 +161,60 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
       /> */}
       <p className='font-bold capitalise'>{postedBy.userName}</p>
     </Link>
+    <div className='bg-white flex text-lg sm:hidden'>
+      <div className='flex-1 flex gap-2'>
+        <button 
+          className='opacity-70 hover:opacity-100 p-2  flex gap-2 outline-none'
+          onClick={(e) => {
+            savePin(e,_id);
+          }}
+        >
+          {saveInfo.totalNoOfSave > 0 && <span className='text-sm font-semibold'>{saveInfo.totalNoOfSave}</span>}
+          {saveInfo.userSavedStatus ? <FaHeart style={{color: 'red'}} /> : <FaRegHeart />}
+        </button>
+      </div>
+      <div className='flex-1 flex gap-2 justify-end'>
+        <button className='flex gap-2 '
+          onClick={(e) => e.stopPropagation()}
+        >
+          <a 
+            href={`${image.asset.url}?dl`}
+            className='opacity-70 hover:opacity-100 p-2 '
+          >
+            <FiDownload />
+          </a>
+        </button>
+        {postedBy._id === user.sub && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              deletePin(_id)
+            }}
+            className=' opacity-70 hover:opacity-100 p-2 oulined-none '    
+          >
+            <MdDeleteOutline />
+          </button>)
+        }
+      </div>
+    </div>
+
+    {performAction.ishappening &&  (
+      <div className={`absolute z-20 top-0 left-0 right-0 bottom-0 flex justify-center items-center text-white ${performAction.actionType === 'saving' ? 'bg-green-200' : 'bg-red-200'}`}>
+        <TailSpin
+          visible={true}
+          height="60"
+          width="60"
+          color="red"
+          ariaLabel="tail-spin-loading"
+          radius="0"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>)
+    }
+
+
+
     
   </div>
   )
