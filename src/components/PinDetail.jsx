@@ -76,7 +76,7 @@ const PinDetail = ({user}) => {
   return (
 <>
   <div className='flex lg:flex-row flex-col m-auto bg-white mt-3 shadow-lg p-2' style={{maxWidth:'1500px'}}> 
-    <div className="flex lg:flex-1 justify-center items-center md:items-start flex-initial h-[400px] border-blue-900 border-4">
+    <div className="flex lg:flex-1 justify-center items-center md:items-start flex-initial h-[400px]">
       <img 
         src={pinDetail.image && urlFor(pinDetail.image).url()}
         alt={pinDetail.title} 
