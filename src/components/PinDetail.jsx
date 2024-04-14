@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react'
+import React,{useEffect, useState, useMemo} from 'react'
 import {MdDownloadForOffline} from 'react-icons/md'
 import { Link ,useParams} from 'react-router-dom'
 import {v4 as uuidv4} from 'uuid'  // popular library to create unique id
@@ -22,6 +22,9 @@ const PinDetail = ({user}) => {
 
   }, [pinId])
 
+  const currentUser= useMemo(() => {
+    return user;
+  }, [user])
 
   const addComment = () => {
     if(comment) {
@@ -35,7 +38,7 @@ const PinDetail = ({user}) => {
           _key: uuidv4(),   // uuidv4 sets a unique key to each comment
           postedBy: {
             _type: 'postedBy',
-            _ref: user._id     
+            _ref: currentUser._id     
           }
         }])
         .commit()
@@ -112,8 +115,9 @@ const PinDetail = ({user}) => {
         to={`/user-profile/${pinDetail.postedBy._id}`}
         className=' flex gap-2 mt-5 items-center bg-white rounded-lg'
        >
+        {console.log(pinDetail)}
         <img 
-          src={pinDetail.postedBy.imageUrl}   // this contains the image of user posted this post
+          src={pinDetail?.postedBy?.imageUrl}   // this contains the image of user posted this post
           alt="PostedBy-user" 
           className='w-8 h-8 rounded-full object-cover'
         />
@@ -140,11 +144,11 @@ const PinDetail = ({user}) => {
       {/* for user to post the comment */}
       <div className="flex items-center flex-wrap mt-6 gap-3 px-2">
         <Link
-          to={`/user-profile/${user?._id}`}
+          to={`/user-profile/${currentUser?._id}`}
           className=' flex items-center cursor-pointer'
          >
           <img 
-            src={user.imageUrl}   // this contains the image of user posted this post
+            src={currentUser?.imageUrl}   // this contains the image of user posted this post
             alt="PostedBy-user" 
             className='w-10 h-10 rounded-full object-cover'
           />

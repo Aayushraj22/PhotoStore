@@ -33,10 +33,10 @@ const Search = ({searchTerm}) => {
   return (
     <div>
       {loading && <Spinner message='Searching for posts ..' /> } 
-      {pins?.length !==0 && <MasonryLayout pins={pins} /> }
+      {pins?.length > 0 && <MasonryLayout pins={pins} /> }
       {pins?.length === 0 && searchTerm !== '' && loading===false && (
-        <div className="mt-10 text-center text-xl">
-          It seems the searched post, Not Found.
+        <div className="mt-10 text-center text-xl text-red-400">
+          It seems we do not have searched Item, appreciatable if you upload some.
         </div>
       )}
     </div>

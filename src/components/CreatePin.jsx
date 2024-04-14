@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,8 @@ const CreatePin = ({ user }) => {
   const [acknowledge, setAcknowledge] = useState("Save");
 
   const navigate = useNavigate();
+
+  const currentUser = useMemo(() => user, [user]);
 
   // display the selected image to user, if image is valid and using imgUrl which got by using Sanity features to convert image into url
   function displayImage(selectedImageFile){
@@ -85,10 +87,10 @@ const CreatePin = ({ user }) => {
             _ref: imageAsset?._id, //  because this image will be stored somewhere in sanity as assets
           },
         },
-        userId: user._id,
+        userId: currentUser._id,
         postedBy: {
           _type: "postedBy",
-          _ref: user._id,
+          _ref: currentUser._id,
         },
         category,
       };
@@ -185,14 +187,14 @@ const CreatePin = ({ user }) => {
             onChange={(e) => setTitle(e.target.value)}
             className="outline-none text-2xl sm:text-3xl font-semibold border-b-2 border-gray-200 p-2 focus:border-gray-400 transition-all duration-500 ease-in-out focus:shadow-md"
           />
-          {user && (
+          {currentUser && (
             <div className="flex gap-2 items-center bg-white rounded-lg px-2 my-2">
               <img
-                src={user.imageUrl}
+                src={currentUser.imageUrl}
                 alt="user-profile"
                 className="h-10 w-10 rounded-full"
               />
-              <p className="font-semibold text-stone-500">{user.userName}</p>
+              <p className="font-semibold text-stone-500">{currentUser.userName}</p>
             </div>
           )}
           <input

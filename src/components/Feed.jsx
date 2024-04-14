@@ -43,8 +43,17 @@ const Feed = () => {
       {pins?.length ? (
         <MasonryLayout pins={pins} />
         ) : (
-          <div className='text-3xl font-bold text-red-600 text-center mt-5'>
-            No post to show!
+          <div className='text-center'>
+          <p className='text-3xl font-bold text-blue-400 text-center mt-6 capitalize'>
+            we are pleased, you are initiating.
+          </p>
+          <button className='mt-3'>
+            <a href="/create-pin"
+              className='px-4 py-2 text-lg rounded-md bg-green-400 hover:bg-green-500 transition-all ease-out text-white capitalize'
+            >
+              create post
+            </a>
+          </button>
           </div>
         )}
     </div>
