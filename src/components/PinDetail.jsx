@@ -21,7 +21,7 @@ const PinDetail = ({user}) => {
 
   useEffect(() => {
       fetchPinDetails()
-  }, [])
+  }, [pinId])
 
   const currentUser= useMemo(() => {
     return user;
