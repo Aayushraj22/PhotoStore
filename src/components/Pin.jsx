@@ -1,4 +1,4 @@
-import React,{ useState} from 'react'
+import React,{ useState, useMemo} from 'react'
 import { Link, useNavigate } from 'react-router-dom' 
 import {v4 as uuidv4} from 'uuid'
 import {AiTwotoneDelete} from 'react-icons/ai'
@@ -13,7 +13,6 @@ import { fetchUser } from '../utils/fetchUser'
 
 
 const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
-
   const navigate = useNavigate()
   const user = fetchUser()
   const [postHovered, setPostHovered] = useState(false)
@@ -23,66 +22,110 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
   })
 
   const [saveInfo, setSaveInfo] = useState({
-    userSavedStatus : save ? (save?.filter((item) => item?.postedBy?._id === user?.sub)?.length > 0 ? true : false) : false,
+    savedStatusInDB : isUserSavedPin(save,user),
     totalNoOfSave: save !== undefined ? save?.length : 0,
+    realtimeStatus : isUserSavedPin(save,user),
   })
- 
+
+  function isUserSavedPin(savedList, user){
+    if(savedList === undefined)
+      return false;
+
+    return savedList.filter(savedUser => savedUser?.postedBy?._id === user?.sub)?.length > 0;
+  }
   // save is an array having the people's id liked the post, at beginning it should be undefined, but as any user liked a post it will become defined and after that save always have an array, 
   // [] -> is a defined array , it is said empty array as [].length = 0
 
-  // below function will add the user's id in save array of db and also change the save-status to true, increament the total saved count by 1, if user have liked the photo first-time but already liked then nothing happens (ideally it should remove the saved status but i've not implemented that features)
-  const savePin = (event,id) => {
-    event.stopPropagation();
+  const {getTimer, setTimer} = useMemo(() => {
+    let timerId = null;
+ 
+    function getTimer (){
+      return timerId;
+    };
 
-    if(!saveInfo.userSavedStatus) {
+    function setTimer ( timer ){
+      timerId = timer;
+    }
+
+    return {getTimer, setTimer};
+  }, [])
+
+    // below function will add the user's id in save array of db and also change the save-status to true, increament the total saved count by 1, if user have liked the photo first-time but already liked then nothing happens (ideally it should remove the saved status but i've not implemented that features)
+    const savePin = (id) => {
+      setSaveInfo({
+        ...saveInfo,
+        realtimeStatus: saveInfo.realtimeStatus === true ? false : true,
+        totalNoOfSave: !saveInfo.realtimeStatus ? saveInfo.totalNoOfSave + 1 : saveInfo.totalNoOfSave - 1,
+      })
+
+      const runningTimer = getTimer();
+      if(runningTimer){
+        clearTimeout(runningTimer)
+      }
+
+      const timerId = setTimeout(() => {
+        
+      // for now user can only save the post, not unsave it
+        if(!saveInfo.savedStatusInDB && !saveInfo.realtimeStatus) {
+
+          setPerformAction({
+            ishappening: true,
+            actionType: 'saving',
+          })
+          client.patch(id)
+            .setIfMissing({save: []})
+            .insert('after', 'save[-1]', [{
+              _key: uuidv4(),
+              userId: user.sub,
+              postedBy: {
+                _type: 'postedBy',
+                _ref: user.sub
+              }
+            }])
+              .commit()
+              .then(() => {
+                setSaveInfo({
+                  ...saveInfo, 
+                  savedStatusInDB: true,
+                  totalNoOfSave: saveInfo.totalNoOfSave + 1,
+                  realtimeStatus: true,
+                })  
+    
+                setPerformAction({
+                  ishappening: false,
+                  actionType: '',
+                })
+              })
+              .catch((error) => {
+                setPerformAction({
+                  ishappening: false,
+                  actionType: '',
+                })
+              })
+        }else{
+          // this block have code for, when user want to undo their save-status, i.e; unsave the pin
+          // console.log('already saved')
+        } 
+
+        clearTimeout(getTimer());
+      }, 2000);
+      
+      setTimer(timerId);
+  
+    }
+
+    // function to remove the post from the view, after post get deleted reloads the current window
+    const deletePin = (id) => {
       setPerformAction({
         ishappening: true,
-        actionType: 'saving',
+        actionType: 'deleting',
       })
-      client.patch(id)
-        .setIfMissing({save: []})
-        .insert('after', 'save[-1]', [{
-          _key: uuidv4(),
-          userId: user.sub,
-          postedBy: {
-            _type: 'postedBy',
-            _ref: user.sub
-          }
-        }])
-          .commit()
-          .then(() => {
-            setSaveInfo({
-              ...saveInfo, 
-              userSavedStatus: true,
-              totalNoOfSave: saveInfo.totalNoOfSave + 1,
-            })
 
-            setPerformAction({
-              ishappening: false,
-              actionType: '',
-            })
-          })
-    }else{
-      // this block have code for, when user want to undo their save-status, i.e; unsave the pin
-    } 
-
-  }
-
+      client.delete(id).then(() => {
+        window.location.reload();
+      })
+    }
   
-
-
-  // function to remove the post from the view, after post get deleted reloads the current window
-  const deletePin = (id) => {
-    setPerformAction({
-      ishappening: true,
-      actionType: 'deleting',
-    })
-
-    client.delete(id).then(() => {
-      window.location.reload();
-    })
-  }
-
   return (
   <div className='m-2 p-2 rounded-md bg-white hover:shadow-md relative'>
     <div
@@ -106,13 +149,14 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
             </div>
 
             {
-              <button className='opacity-70 hover:opacity-100 bg-white rounded-sm p-2 flex gap-1 outline-none'
+              <button className='opacity-70 hover:opacity-100 bg-white rounded-sm h-8 flex gap-1 items-center p-2 outline-none '
                 onClick={(e) => {
-                  savePin(e,_id);
+                  e.stopPropagation()
+                  savePin(_id);
                 }}
               >
                 {saveInfo.totalNoOfSave > 0 && <span className='text-sm font-semibold'>{saveInfo.totalNoOfSave}</span>}
-                {saveInfo.userSavedStatus ? <FaHeart style={{color: 'red'}} /> : <FaRegHeart />}
+                {saveInfo.realtimeStatus ? <FaHeart style={{color: 'red'}} /> : <FaRegHeart />}
               </button>
             }
           </div>
@@ -155,7 +199,7 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
      className=' flex gap-2 mt-2 items-center'
      >
       {/* <img 
-        src={postedBy.imageUrl}   // this contains the image of user posted this post
+        src={postedBy.image}   // this contains the image of user posted this post
         alt="PostedBy-user" 
         className='w-8 h-8 rounded-full object-cover'
       /> */}
@@ -166,11 +210,12 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
         <button 
           className='opacity-70 hover:opacity-100 p-2  flex gap-2 outline-none'
           onClick={(e) => {
-            savePin(e,_id);
+            e.stopPropagation()
+            savePin(_id)
           }}
         >
           {saveInfo.totalNoOfSave > 0 && <span className='text-sm font-semibold'>{saveInfo.totalNoOfSave}</span>}
-          {saveInfo.userSavedStatus ? <FaHeart style={{color: 'red'}} /> : <FaRegHeart />}
+          {saveInfo.realtimeStatus ? <FaHeart style={{color: 'red'}} /> : <FaRegHeart />}
         </button>
       </div>
       <div className='flex-1 flex gap-2 justify-end'>

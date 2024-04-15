@@ -36,3 +36,34 @@
     transform: rotate(360deg);
   }
 }
+
+.animatingCommentButton{
+  animation: rainbowAnimation;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes rainbowAnimation {
+  0%{
+    background:violet;
+  }
+  16%{
+    background:indigo;
+  }
+  32%{
+    background:blue;
+  }
+  48%{
+    background:green;
+  }
+  64%{
+    background:yellow;
+  }
+  80%{
+    background:orange;
+  }
+  100%{
+    background:red;
+  }
+
+}

@@ -3,6 +3,8 @@ import {MdDownloadForOffline} from 'react-icons/md'
 import { Link ,useParams} from 'react-router-dom'
 import {v4 as uuidv4} from 'uuid'  // popular library to create unique id
 import { GoLinkExternal } from "react-icons/go";
+import { FiSend } from "react-icons/fi";
+
 
 import {client, urlFor} from '../client'
 import MasonryLayout from './MasonryLayout'
@@ -18,9 +20,8 @@ const PinDetail = ({user}) => {
   const {pinId} = useParams()
 
   useEffect(() => {
-    fetchPinDetails()
-
-  }, [pinId])
+      fetchPinDetails()
+  }, [])
 
   const currentUser= useMemo(() => {
     return user;
@@ -43,9 +44,9 @@ const PinDetail = ({user}) => {
         }])
         .commit()
         .then(() => {
-          fetchPinDetails()   // again doing it so that we can now get a new comment for this post, new comment which is done by me
           setAddingComment(false)
           setComment('')
+          fetchPinDetails()   // again doing it so that we can now get a new comment for this post, new comment which is done by me
         })
     }
   }
@@ -58,7 +59,7 @@ const PinDetail = ({user}) => {
       client.fetch(query)
       .then((data) => {   // it returns an array of post of length 1
         setPinDetail(data[0])   //  on 0th index is our post placed
-      
+        
         if(data[0]) {
           // now get all the post which have same category as the current post has, and it will used to recommedation
           query = pinDetailMorePinQuery(data[0])
@@ -66,8 +67,10 @@ const PinDetail = ({user}) => {
           .then((res) => {
             setPins(res)  
           })
+          .catch(()=>{})
         }
       })
+      .catch(()=>{})
     }
   }
 
@@ -115,9 +118,8 @@ const PinDetail = ({user}) => {
         to={`/user-profile/${pinDetail.postedBy._id}`}
         className=' flex gap-2 mt-5 items-center bg-white rounded-lg'
        >
-        {console.log(pinDetail)}
         <img 
-          src={pinDetail?.postedBy?.imageUrl}   // this contains the image of user posted this post
+          src={pinDetail?.postedBy?.image }   // this contains the image of user posted this post
           alt="PostedBy-user" 
           className='w-8 h-8 rounded-full object-cover'
         />
@@ -142,31 +144,40 @@ const PinDetail = ({user}) => {
        </div>
 
       {/* for user to post the comment */}
-      <div className="flex items-center flex-wrap mt-6 gap-3 px-2">
-        <Link
-          to={`/user-profile/${currentUser?._id}`}
-          className=' flex items-center cursor-pointer'
-         >
-          <img 
-            src={currentUser?.imageUrl}   // this contains the image of user posted this post
-            alt="PostedBy-user" 
-            className='w-10 h-10 rounded-full object-cover'
-          />
-        </Link>
-        <input type="text"
-          className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-lg focus:border-gray-300'
-          placeholder='add comments..'
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          autoFocus
-        />
-        <button
-          type='button'
-          className='bg-red-500 hover:bg-red-600 text-white rounded-md px-4 py-2 font-semibold text-base outline-none '
-          onClick={addComment}
-        >
-          {addingComment ? 'Posting..' : 'Post'}
-        </button>
+      <div className="flex flex-wrap mt-6 gap-2 px-2">
+          <Link
+            to={`/user-profile/${currentUser?._id}`}
+            className=' flex items-center cursor-pointer'
+          >
+            <img 
+              src={currentUser?.image}   // this contains the image of user posted this post
+              alt="PostedBy-user" 
+              className='w-10 h-10 rounded-full object-cover'
+            />
+          </Link>
+          <div className='border-2 border-gray-300 rounded-lg flex-1 flex hover:border-gray-500 transition-all ease-in-out'>
+            <input type="text"
+              className='flex-1 outline-none p-2 rounded-lg  w-full'
+              placeholder='add comments..'
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              onKeyDown={(e) => {
+                if(e.code === 'Enter'){
+                  addComment();
+                }
+
+              }}
+            />
+
+            <button
+              type='button'
+              className={`bg-green-500 hover:bg-green-600 text-white rounded-md text-lg p-2  outline-none px-2 h-full  ${addingComment ? 'animatingCommentButton' : ''}`}
+              onClick={addComment}
+            >
+              <FiSend />
+            </button>
+          </div>
+        
       </div>
     </div> 
   </div>

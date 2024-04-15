@@ -27,7 +27,7 @@ const Navbar = ({searchTerm, setSearchTerm, user}) => {
         to={`/user-profile/${user?._id}`}
         className='hidden md:flex items-center justify-center' 
        >
-        <img src={user.imageUrl} alt="userProfileImage" className='w-12 h-10 rounded-lg'/>
+        <img src={user.image} alt="userProfileImage" className='w-12 h-10 rounded-lg'/>
       </Link>
       <Link 
         to='/create-pin'

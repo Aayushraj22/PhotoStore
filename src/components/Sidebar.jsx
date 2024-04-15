@@ -63,7 +63,7 @@ const Sidebar = ({user,closeToggle}) => {
           onClick={handleCloseSidebar}
          >
           <img 
-            src={user.imageUrl} 
+            src={user.image} 
             alt="userProfile" 
             className='w-9 h-9 rounded-full border-2 border-blue-500'  
           />

@@ -190,7 +190,7 @@ const CreatePin = ({ user }) => {
           {currentUser && (
             <div className="flex gap-2 items-center bg-white rounded-lg px-2 my-2">
               <img
-                src={currentUser.imageUrl}
+                src={currentUser.image}
                 alt="user-profile"
                 className="h-10 w-10 rounded-full"
               />
