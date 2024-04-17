@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect,useMemo} from 'react'
 
 import MasonryLayout from './MasonryLayout'
 import {client} from '../client'
@@ -10,23 +10,59 @@ const Search = ({searchTerm}) => {
   const [loading, setLoading] = useState(true)
   const [pins, setPins] = useState(null)
 
-  useEffect(() => {
+  let {getPins, getTimerId, setTimerId} = useMemo(() => {
+    let timerId = null;
 
-    if(searchTerm === '') {
-      client.fetch(feedQuery)
-        .then((data) => {
-          setPins(data)
-          setLoading(false)
-        })
-    } else {
-      const query = searchQuery(searchTerm.toLowerCase())
-
-      client.fetch(query)
-        .then((data) => {
-          setPins(data)
-          setLoading(false)
-        })
+    function setTimerId(timer){
+      timerId = timer;
     }
+
+    function getTimerId(){
+      return timerId;
+    }
+
+    function getPins(searchTerm){
+      if(searchTerm === '') {
+        client.fetch(feedQuery)
+          .then((data) => {
+            setPins(data)
+            if(loading)
+              setLoading(false)
+          })
+      } else {
+        const query = searchQuery(searchTerm.toLowerCase())
+  
+        client.fetch(query)
+          .then((data) => {
+            setPins(data)
+            if(loading)
+              setLoading(false)
+          })
+      }
+    }
+
+    return {getPins, getTimerId, setTimerId}
+  }, [])
+
+  useEffect(() => {
+    let timerId = getTimerId();
+
+    if(searchTerm === '' && !timerId){
+      getPins(searchTerm)
+      return
+    }
+
+    // debounce the network call for each key-press by 500ms
+    // debounce means delay the execution of function by some time(in ms)   
+    if(timerId){
+      clearTimeout(timerId)
+    }
+
+    timerId = setTimeout(() => {
+      getPins(searchTerm)
+    }, 500);
+    setTimerId(timerId)
+    
   }, [searchTerm])
   
 
@@ -36,7 +72,7 @@ const Search = ({searchTerm}) => {
       {pins?.length > 0 && <MasonryLayout pins={pins} /> }
       {pins?.length === 0 && searchTerm !== '' && loading===false && (
         <div className="mt-10 text-center text-xl text-red-400">
-          It seems we do not have searched Item, appreciatable if you upload some.
+          No searched Post, appreciatable if you Upload some.
         </div>
       )}
     </div>
