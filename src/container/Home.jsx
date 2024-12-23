@@ -42,7 +42,7 @@ const Home = () => {
 
       <div className={`hidden md:flex h-screen flex-initial `}>
         {/* sidebar for larger devices */}
-        <Sidebar user={user && user}/>   
+        <Sidebar user={user && user} device={'large'}/>   
       </div> 
 
         {/* UI for smaller and laptop devices */}
