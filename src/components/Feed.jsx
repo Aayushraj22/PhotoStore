@@ -21,11 +21,13 @@ const Feed = () => {
 
       client.fetch(query).then((data) => {
         setPins(data)
+      }).finally(() => { 
         setLoading(false)
       })
     } else {
       client.fetch(feedQuery).then((data) => {
         setPins(data)
+      }).finally(() => {
         setLoading(false)
       })
     }
@@ -43,7 +45,7 @@ const Feed = () => {
       {pins?.length ? (
         <MasonryLayout pins={pins} />
         ) : (
-          <div className='text-center'>
+        <div className='text-center'>
           <p className='text-3xl font-bold text-blue-400 text-center mt-6 capitalize'>
             we are pleased, you are initiating.
           </p>
@@ -54,7 +56,7 @@ const Feed = () => {
               create post
             </a>
           </button>
-          </div>
+        </div>
         )}
     </div>
   )

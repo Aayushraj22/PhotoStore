@@ -12,7 +12,7 @@ import {client, urlFor } from '../client'
 import { fetchUser } from '../utils/fetchUser'
 
 
-const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
+const Pin = ({pin: {postedBy,image,_id,destination,save,title}}) => {
   const navigate = useNavigate()
   const user = fetchUser()
   const [postHovered, setPostHovered] = useState(false)
@@ -127,14 +127,14 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
     }
   
   return (
-  <div className='m-2 p-2 rounded-md bg-white hover:shadow-md relative'>
+  <div className='p-3 sm:my-3 rounded-md bg-white hover:shadow-md relative '>
     <div
       onMouseEnter={() => setPostHovered(true)}
       onMouseLeave={() => setPostHovered(false)}
-      className='relative cursor-zoom-in w-auto transition-all duration-500 ease-in-out hover:shadow-lg rounded-lg overflow-hidden opacity-100 hover:opacity-90'
+      className='relative cursor-zoom-in w-auto transition-all duration-500 ease-in-out hover:shadow-lg rounded-lg overflow-hidden opacity-100 hover:opacity-90 '
       onClick={() => navigate(`/pin-detail/${_id}`)}
     >
-      <img src={urlFor(image).width(250).url()} alt="user-Post" className='rounded-lg w-full '/>  
+      <img src={urlFor(image).width(250).url()} alt="user-Post" className='w-full'/>  
       {postHovered && (
         <div className="absolute top-0 h-full w-full flex flex-col justify-between p-2 pl-1 z-10 max-sm:hidden">
           <div className="flex items-center justify-between text-lg">
@@ -193,17 +193,19 @@ const Pin = ({pin: {postedBy,image,_id,destination,save}}) => {
       )}
     </div>
     
+    {/* show the title of photo */}
+    <p className='text-sm mt-2 capitalize text-slate-800 pl-2'>{title}</p>
     {/* show the detail of user who posted this post */}
     <Link
      to={`user-profile/${postedBy._id}`}
-     className=' flex gap-2 mt-2 items-center'
+     className=' flex gap-2 items-center mt-1 text-slate-600'
      >
       {/* <img 
         src={postedBy.image}   // this contains the image of user posted this post
         alt="PostedBy-user" 
-        className='w-8 h-8 rounded-full object-cover'
+        className='w-5 h-5 rounded-full object-cover'
       /> */}
-      <p className='font-bold capitalise'>{postedBy.userName}</p>
+      <p className='capitalise text-sm'>By: {postedBy.userName}</p>
     </Link>
     <div className='bg-white flex text-lg sm:hidden'>
       <div className='flex-1 flex gap-2'>

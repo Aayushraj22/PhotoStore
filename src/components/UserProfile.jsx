@@ -10,8 +10,8 @@ import Spinner from './Spinner'
 
 // get new image every time window reloaded 
 const randomImage = 'https://source.unsplash.com/1600x900/?nature,photography,technology'
-const activeBtnStyles = 'bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-button'
-const notActiveBtnStyles = 'bg-primary text-black mr-4 font-bold p-2 rounded-full w-28 outline-button'
+const activeBtnStyles = 'bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-button transition-all'
+const notActiveBtnStyles = 'bg-primary text-black mr-4 font-bold p-2 rounded-full w-28 outline-button transition-all'
 
 const UserProfile = () => {
 
