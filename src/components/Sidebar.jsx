@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { IoHome } from "react-icons/io5";
-import { TbLayoutSidebarRightCollapseFilled, TbLayoutSidebarLeftCollapseFilled  } from "react-icons/tb";
+import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
 // import {IoIosArrowForward} from 'react-icons/io'
 
 import {categories} from '../utils/data'
@@ -85,7 +85,7 @@ const Sidebar = ({user, closeToggle, device}) => {
               onClick={() => setShowFullSidebar(!showFullSidebar)}
               title={showFullSidebar ? 'Collapse' : 'Expand' }
             >
-              {showFullSidebar ? <TbLayoutSidebarLeftCollapseFilled fontSize={30}/> : <TbLayoutSidebarRightCollapseFilled fontSize={30}/>}
+              {showFullSidebar ? <GoSidebarCollapse fontSize={30}/> : <GoSidebarExpand fontSize={30}/>}
             </button> )
           }
         </div>)
