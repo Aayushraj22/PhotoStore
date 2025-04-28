@@ -3,6 +3,7 @@ window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogn
 
 const recognition = new window.SpeechRecognition(); //initialize my instance of speech recognition
 recognition.interimResults = true; //return results while still working on current recognition
+recognition.continuous = true; // Recommended for longer recordings
 
 //once speech recognition determines it has a "result", grab the texts of that result, join all of them, and add to paragraph
 // recognition.addEventListener("result", (e) => {
@@ -30,7 +31,6 @@ function startRecording() {
 }
 
 function stopRecording() {
-    // console.log("okay I'll stop")
     recognition.removeEventListener("end", recognition.start)
     recognition.stop();
 }

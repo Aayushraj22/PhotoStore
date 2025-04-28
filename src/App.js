@@ -34,7 +34,7 @@ function App() {
         transition={Flip}
       />
       <Routes>
-        <Route path="/*" element={<Home />} />{" "}
+        <Route path="/*" element={<Home />} />
         {/* for non-defined path the application is directed to home */}
         <Route path="/login" element={<Login />} />
       </Routes>

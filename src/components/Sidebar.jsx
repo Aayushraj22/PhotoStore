@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { IoHome } from "react-icons/io5";
-import { LuPanelLeftClose, LuPanelLeftOpen } from "react-icons/lu";
+import { TbLayoutSidebarRightCollapseFilled, TbLayoutSidebarLeftCollapseFilled  } from "react-icons/tb";
 // import {IoIosArrowForward} from 'react-icons/io'
 
 import {categories} from '../utils/data'
@@ -9,11 +9,12 @@ import whiteLogo from '../assets/whiteLogo.png'
 import { useState } from 'react';
 
 const Sidebar = ({user, closeToggle, device}) => {
-
-  const isNotActiveStyle = 'flex items-center p-3 gap-3 text-gray-500 hover:text-black hover:bg-slate-100 transition-all duration-200 ease-in-out capitalize rounded-lg'
-  const isActiveStyle = 'flex items-center p-3 gap-3 font-semibold text-green-800 bg-green-400 transition-all duration-200 ease-in-out capitalize rounded-lg'
-  
   const [showFullSidebar, setShowFullSidebar] = useState(true)
+
+  const navlinkStyle = `flex p-2 ${showFullSidebar ? 'gap-3 justify-start' : 'justify-center'} items-center transition-all duration-200 ease-in-out capitalize rounded-lg`
+  const isNotActiveStyle = `text-gray-500 hover:text-black hover:bg-slate-100 `
+  const isActiveStyle = `font-semibold text-slate-800 bg-slate-300 `
+  
 
   const handleCloseSidebar = () => {
     if(closeToggle) closeToggle(false)
@@ -34,11 +35,11 @@ const Sidebar = ({user, closeToggle, device}) => {
           ) : ''
         }
         
-        <div className={`flex flex-col ${device === 'large' ? 'mt-3' : ''}`}>
-          {showFullSidebar ? <h3 className='p-3 text-base 2xl:text-xl ' >Discover Categories</h3> : ''}
+        <div className={`flex flex-col gap-1 ${device === 'large' ? 'mt-3' : ''}`}>
+          {showFullSidebar ? <h3 className='p-3 text-base 2xl:text-xl font-semibold' >Discover Categories</h3> : ''}
           <NavLink
             to='/'
-            className={({isActive}) => isActive? isActiveStyle : isNotActiveStyle }
+            className={({isActive}) => `${isActive? isActiveStyle : isNotActiveStyle} ${navlinkStyle}` }
             onClick={handleCloseSidebar}
             title='Home'
            >
@@ -49,7 +50,7 @@ const Sidebar = ({user, closeToggle, device}) => {
             <NavLink
               key={category.name}
               to={`/category/${category.name}`}
-              className={({isActive}) => isActive? isActiveStyle : isNotActiveStyle }
+              className={({isActive}) => `${isActive? isActiveStyle : isNotActiveStyle} ${navlinkStyle}` }
               onClick={handleCloseSidebar}
               title={category.name.slice(0,1).toUpperCase() + category.name.slice(1)}
             >
@@ -80,11 +81,11 @@ const Sidebar = ({user, closeToggle, device}) => {
           </Link> : ''}
           {device === 'large' && (
             <button 
-              className='grid place-items-center p-2 rounded-lg cursor-pointer' 
+              className='grid place-items-center p-2 rounded-lg cursor-pointer text-slate-700' 
               onClick={() => setShowFullSidebar(!showFullSidebar)}
               title={showFullSidebar ? 'Collapse' : 'Expand' }
             >
-              {showFullSidebar ? <LuPanelLeftClose fontSize={30}/> : <LuPanelLeftOpen fontSize={30}/>}
+              {showFullSidebar ? <TbLayoutSidebarLeftCollapseFilled fontSize={30}/> : <TbLayoutSidebarRightCollapseFilled fontSize={30}/>}
             </button> )
           }
         </div>)
